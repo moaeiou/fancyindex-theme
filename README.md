@@ -1,22 +1,27 @@
 # 🚀 fancyindex-theme
-Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
-
 A morden fancyindex-theme with high performance
+
+Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 ## 🔧 How to use
-> You need Nginx, and a depend (Example using Debian Sid 2026-06-28-08:00)
+You need Nginx First, and a depend 
+
+(In the others systems, such as ArchLinux, You need compile nginx and add it.)
 ```
 apt update
 apt install nginx libnginx-mod-http-fancyindex
-cd /var/www/html # Default Nginx website files path, you can change it if you need
-git clone https://github.com/mokanove/fancyindex-theme.git
+cd /var/www/html # Default Nginx website files path if you using debian, you can change it if you need
+git clone https://github.com/moaeiou/fancyindex-theme.git
+cd fancyindex-theme
+rm ./README.md
 ```
-> In nginx.conf header(Usually in Line 1)
+### 📚 Nginx config
+> ⚠️ WARN: The alias must be change to a real path, else be fatal.
+
+In Nginx config file header
 ```
 include /etc/nginx/modules-enabled/*.conf;
 ```
-> Nginx config part
->
-> ⚠️ WARN: The alias must be change to a real path, else be fatal.
+In the `server` part
 ```
 location / {
     alias /var/www/html;
@@ -29,8 +34,7 @@ location / {
     fancyindex_ignore "fancyindex-theme";
 }
 ```
-### 💻 Advance
-> To hide the `/` in the up of filename, add nginx config inside location to denied
+To hide the `/` in the up of filename, add nginx config inside `location` to denied
 ```
 fancyindex_show_path off;
 ```
