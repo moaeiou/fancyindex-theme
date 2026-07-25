@@ -1,4 +1,4 @@
-# 🚀 fancyindex-theme
+# fancyindex-theme
 
 A modern, dependency-free theme for Nginx Fancy Index.
 
