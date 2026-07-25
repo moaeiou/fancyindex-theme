@@ -1,6 +1,6 @@
 # fancyindex-theme
 
-A modern, dependency-free theme for Nginx Fancy Index.
+A modern, dependency-free theme for Nginx FancyIndex.
 
 ## 🚀 Features
 
@@ -21,13 +21,15 @@ apt update
 apt install git nginx libnginx-mod-http-fancyindex
 cd /var/www/html
 git clone https://github.com/moaeiou/fancyindex-theme.git
+cd fancyindex-theme
+rm README.md
 ```
 
 ### 📚 Nginx config
 
-Load the module from the top level of `/etc/nginx/nginx.conf` when your package
+Load the module from the top level of `/etc/nginx/nginx.conf` 
 
-does not load it automatically:
+when your package does not load it automatically:
 
 ```ini
 include /etc/nginx/modules-enabled/*.conf;
@@ -52,7 +54,9 @@ location / {
 
 To hide Fancy Index's generated path heading,
 
-add this directive inside the`location /` block (the theme renders its own path and breadcrumbs):
+add this directive inside the`location /` block 
+
+(the theme renders its own path and breadcrumbs):
 
 ```ini
 fancyindex_show_path off;
@@ -66,7 +70,6 @@ systemctl reload nginx
 ```
 
 ## ⚖️ LICENSE
+This version is licensed under the [MoPL](https://867678.xyz/doc/MoPL).
 
 The source LICENSE was under MIT with Copyright © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
-
-This version is licensed under the [MoPL](https://867678.xyz/doc/MoPL).
