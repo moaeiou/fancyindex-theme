@@ -1,30 +1,45 @@
 # 🚀 fancyindex-theme
-A morden fancyindex-theme with high performance
+
+A modern, dependency-free theme for Nginx Fancy Index.
+
+## 🚀 Features
 
 Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
+
+- Lightweight: plain HTML, CSS, and JavaScript
+- Responsive file listing with light and dark themes
+- Client-side search, breadcrumbs, pagination, and file icons
+
 ## 🔧 How to use
-You need Nginx First, and a depend 
 
-(In the others systems, such as ArchLinux, You need compile nginx and add it.)
-```
+Install Nginx and the Fancy Index module. Package names differ between Linux
+
+distributions; the following example is for Debian:
+
+```bash
 apt update
-apt install nginx libnginx-mod-http-fancyindex
-cd /var/www/html # Default Nginx website files path if you using debian, you can change it if you need
+apt install git nginx libnginx-mod-http-fancyindex
+cd /var/www/html
 git clone https://github.com/moaeiou/fancyindex-theme.git
-cd fancyindex-theme
-rm ./README.md
 ```
-### 📚 Nginx config
-> ⚠️ WARN: The alias must be change to a real path, else be fatal.
 
-In Nginx config file header
-```
+### 📚 Nginx config
+
+Load the module from the top level of `/etc/nginx/nginx.conf` when your package
+
+does not load it automatically:
+
+```ini
 include /etc/nginx/modules-enabled/*.conf;
 ```
-In the `server` part
-```
+
+Add the following locations to the relevant `server` block.
+
+Change the alias to the directory you want to publish, and keep the trailing slash:
+
+```ini
 location / {
-    alias /var/www/html;
+    alias /var/www/html/;
     include mime.types;
     fancyindex on;
     fancyindex_localtime on;
@@ -33,12 +48,30 @@ location / {
     fancyindex_footer "/fancyindex-theme/footer.html";
     fancyindex_ignore "fancyindex-theme";
 }
+
+# Deny hidden files such as .git while allowing ACME challenges.
+location ~ /\.(?!well-known/) {
+    deny all;
+}
 ```
-To hide the `/` in the up of filename, add nginx config inside `location` to denied
-```
+
+To hide Fancy Index's generated path heading,
+
+add this directive inside the`location /` block (the theme renders its own path and breadcrumbs):
+
+```ini
 fancyindex_show_path off;
 ```
+
+Validate and reload the configuration:
+
+```bash
+nginx -t
+systemctl reload nginx
+```
+
 ## ⚖️ LICENSE
-> The source LICENSE was under MIT with Copyright © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
->
-> This version licensed under the [MoPL](https://867678.xyz/doc/MoPL)
+
+The source LICENSE was under MIT with Copyright © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
+
+This version is licensed under the [MoPL](https://867678.xyz/doc/MoPL).

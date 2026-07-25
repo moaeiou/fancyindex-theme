@@ -18,7 +18,7 @@
       <button type="button" class="theme-toggle" aria-label="Change theme">
         Auto
       </button>
-      <form>
+      <form role="search">
         <input
           name="filter"
           id="search"
@@ -28,6 +28,7 @@
         />
       </form>
     </div>
+    <p class="results-status" role="status" aria-live="polite"></p>
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb">
         <li><a href="/">Root</a></li>
@@ -36,6 +37,7 @@
         class="copy-page-url-btn"
         type="button"
         aria-label="Copy current page URL"
+        aria-live="polite"
       >
         Copy URL
       </button>

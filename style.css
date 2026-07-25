@@ -32,6 +32,7 @@
   --row-hover: #eef1f8;
   --rule: #d7dde6;
   --accent: #2d6cdf;
+  --accent-contrast: #ffffff;
   --focus: 0 0 0 3px rgba(45, 108, 223, 0.25);
   --link: var(--accent);
   --clear-link: var(--muted);
@@ -57,6 +58,7 @@ body.theme-dark {
   --row-hover: #3d4351;
   --rule: #3c404a;
   --accent: #cfd6df;
+  --accent-contrast: #1e2430;
   --focus: 0 0 0 3px rgba(255, 255, 255, 0.25);
   --link: #ffffff;
   --clear-link: #cbd3dc;
@@ -247,6 +249,14 @@ input:focus-visible {
   appearance: textfield;
 }
 
+.results-status {
+  min-height: 1.5em;
+  margin: -0.75rem 0 0.75rem;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
 /* =========================
    Table
    ========================= */
@@ -430,7 +440,7 @@ td a {
 #list tbody tr td:first-child a[href$=".c"]::before,
 #list tbody tr td:first-child a[href$=".cpp"]::before,
 #list tbody tr td:first-child a[href$=".h"]::before,
-#list tbody tr td:fnginx-fancyindexirst-child a[href$=".sh"]::before,
+#list tbody tr td:first-child a[href$=".sh"]::before,
 #list tbody tr td:first-child a[href$=".rb"]::before,
 #list tbody tr td:first-child a[href$=".go"]::before,
 #list tbody tr td:first-child a[href$=".rs"]::before,
@@ -475,7 +485,7 @@ footer {
 
 footer a {
   text-decoration: underline;
-  color: blue;
+  color: var(--link);
 }
 
 /* =========================
@@ -617,7 +627,7 @@ footer a {
 
 .pagination-btn.active {
   background: var(--accent);
-  color: white;
+  color: var(--accent-contrast);
   border-color: var(--accent);
   font-weight: 600;
 }

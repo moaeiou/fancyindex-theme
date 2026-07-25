@@ -7,10 +7,13 @@
   const form = document.querySelector(".directory-controls form");
   const input = document.getElementById("search");
   const heading = document.querySelector("h1");
-  const controls = document.querySelector(".directory-controls");
   const themeToggle = document.querySelector(".theme-toggle");
+  const resultsStatus = document.querySelector(".results-status");
   const body = document.body;
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const reducedMotionQuery = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  );
   const table = document.querySelector("#list");
   const tbody = table?.querySelector("tbody");
 
@@ -18,19 +21,27 @@
   let currentThemeIndex = 0;
 
   function updateThemeButton() {
+    if (!themeToggle) return;
+
     const theme = themeOptions[currentThemeIndex];
     const labels = { auto: "Auto", light: "Light", dark: "Dark" };
     themeToggle.textContent = labels[theme];
     themeToggle.setAttribute("data-theme", theme);
+    themeToggle.setAttribute(
+      "aria-label",
+      `Theme: ${labels[theme]}. Change theme`,
+    );
   }
 
-  themeToggle.addEventListener("click", () => {
-    currentThemeIndex = (currentThemeIndex + 1) % 3;
-    const theme = themeOptions[currentThemeIndex];
-    storeTheme(theme);
-    applyTheme(theme);
-    updateThemeButton();
-  });
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      currentThemeIndex = (currentThemeIndex + 1) % themeOptions.length;
+      const theme = themeOptions[currentThemeIndex];
+      storeTheme(theme);
+      applyTheme(theme);
+      updateThemeButton();
+    });
+  }
 
   function updateBreadcrumbs() {
     if (!heading) return;
@@ -38,40 +49,59 @@
     const breadcrumbNav = document.querySelector(".breadcrumb-nav");
     if (!breadcrumbNav) return;
 
-    const pathText = heading.textContent.replace(/^index of:?/i, "").trim();
-
     let breadcrumbList = breadcrumbNav.querySelector(".breadcrumb");
     if (!breadcrumbList) {
       breadcrumbList = document.createElement("ol");
       breadcrumbList.className = "breadcrumb";
       breadcrumbNav.prepend(breadcrumbList);
     }
-    breadcrumbList.innerHTM;
+    breadcrumbList.replaceChildren();
+
+    const rootLi = document.createElement("li");
+    const rootLink = document.createElement("a");
+    rootLink.href = "/";
+    rootLink.textContent = "Root";
+    rootLi.appendChild(rootLink);
+    breadcrumbList.appendChild(rootLi);
+
+    const encodedParts = window.location.pathname.split("/").filter(Boolean);
+    const decodedParts = encodedParts.map((part) => {
+      try {
+        return decodeURIComponent(part);
+      } catch {
+        return part;
+      }
+    });
 
     // Path
-    if (pathText && pathText !== "/") {
-      const parts = pathText.split("/").filter(Boolean);
-      let currentPath = "";
+    if (encodedParts.length) {
+      let currentPath = "/";
 
-      parts.forEach((part, index) => {
-        currentPath += "/" + part;
+      decodedParts.forEach((part, index) => {
+        currentPath += `${encodedParts[index]}/`;
         const li = document.createElement("li");
 
-        if (index === parts.length - 1) {
+        if (index === decodedParts.length - 1) {
           li.textContent = part;
           li.setAttribute("aria-current", "page");
           li.className = "breadcrumb-current";
         } else {
           const link = document.createElement("a");
-          link.href = currentPath + "/";
+          link.href = currentPath;
           link.textContent = part;
           li.appendChild(link);
         }
 
         breadcrumbList.appendChild(li);
       });
+    } else {
+      rootLink.setAttribute("aria-current", "page");
     }
-    heading.textContent = "Index of";
+
+    const displayPath = decodedParts.length
+      ? `/${decodedParts.join("/")}/`
+      : "/";
+    heading.textContent = `Index of ${displayPath}`;
   }
 
   updateBreadcrumbs();
@@ -89,10 +119,13 @@
           const textarea = document.createElement("textarea");
           textarea.value = url;
           document.body.appendChild(textarea);
-          textarea.select();
-          textarea.setSelectionRange(0, 99999);
-          document.execCommand("copy");
-          document.body.removeChild(textarea);
+          try {
+            textarea.select();
+            textarea.setSelectionRange(0, textarea.value.length);
+            if (!document.execCommand("copy")) throw new Error("Copy failed");
+          } finally {
+            textarea.remove();
+          }
         }
         copyBtn.textContent = "Copied!";
       } catch {
@@ -106,7 +139,13 @@
   }
 
   const listItems = tbody ? Array.from(tbody.querySelectorAll("tr")) : [];
-  let filteredItems = [...listItems];
+  const parentItems = listItems.filter((item) =>
+    item.classList.contains("parent"),
+  );
+  const contentItems = listItems.filter(
+    (item) => !item.classList.contains("parent"),
+  );
+  let filteredItems = [...contentItems];
   let currentPage = 1;
 
   function createPagination() {
@@ -135,7 +174,7 @@
     prevBtn.addEventListener("click", () => {
       if (currentPage > 1) {
         currentPage--;
-        renderPage();
+        renderPage({ shouldScroll: true });
       }
     });
     buttonsDiv.appendChild(prevBtn);
@@ -166,7 +205,7 @@
     nextBtn.addEventListener("click", () => {
       if (currentPage < totalPages) {
         currentPage++;
-        renderPage();
+        renderPage({ shouldScroll: true });
       }
     });
     buttonsDiv.appendChild(nextBtn);
@@ -192,15 +231,19 @@
     }
     btn.addEventListener("click", () => {
       currentPage = pageNum;
-      renderPage();
+      renderPage({ shouldScroll: true });
     });
     return btn;
   }
 
-  function renderPage() {
+  function renderPage({ shouldScroll = false } = {}) {
     if (!tbody) return;
 
     listItems.forEach((item) => (item.style.display = "none"));
+    parentItems.forEach((item) => {
+      item.hidden = false;
+      item.style.display = "";
+    });
 
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     const pageItems = filteredItems.slice(start, start + ITEMS_PER_PAGE);
@@ -216,11 +259,29 @@
       if (pagination && table) table.after(pagination);
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (resultsStatus) {
+      const query = input?.value.trim();
+      resultsStatus.textContent = query
+        ? filteredItems.length
+          ? `${filteredItems.length} matching item${filteredItems.length === 1 ? "" : "s"}`
+          : "No matching items"
+        : "";
+    }
+
+    if (shouldScroll) {
+      window.scrollTo({
+        top: 0,
+        behavior: reducedMotionQuery.matches ? "auto" : "smooth",
+      });
+    }
   }
 
   let searchTimeout;
-  input.addEventListener(
+  if (form) {
+    form.addEventListener("submit", (event) => event.preventDefault());
+  }
+
+  input?.addEventListener(
     "input",
     function () {
       clearTimeout(searchTimeout);
@@ -228,23 +289,20 @@
         const searchValue = this.value.trim();
 
         if (!searchValue) {
-          filteredItems = [...listItems];
-          listItems.forEach((item) => (item.hidden = false));
+          filteredItems = [...contentItems];
+          contentItems.forEach((item) => (item.hidden = false));
           currentPage = 1;
           renderPage();
           return;
         }
 
-        const expression =
-          "(^|.*[^\\p{L}])" +
-          searchValue.split(/\s+/).join("([^\\p{L}]|[^\\p{L}].*[^\\p{L}])") +
-          ".*$";
-        const matcher = new RegExp(expression, "iu");
+        const terms = searchValue.toLocaleLowerCase().split(/\s+/);
 
-        filteredItems = listItems.filter((item) => {
+        filteredItems = contentItems.filter((item) => {
           const text =
             item.querySelector("td")?.textContent.replace(/\s+/g, " ") || "";
-          const matches = matcher.test(text);
+          const normalizedText = text.toLocaleLowerCase();
+          const matches = terms.every((term) => normalizedText.includes(term));
           item.hidden = !matches;
           return matches;
         });
@@ -291,7 +349,9 @@
   }
 
   // Initialize theme
-  const storedTheme = getStoredTheme();
+  const savedTheme = getStoredTheme();
+  const storedTheme = themeOptions.includes(savedTheme) ? savedTheme : "auto";
+  if (storedTheme !== savedTheme) storeTheme(storedTheme);
   currentThemeIndex = themeOptions.indexOf(storedTheme);
   if (currentThemeIndex === -1) currentThemeIndex = 0;
   applyTheme(storedTheme);
@@ -306,6 +366,7 @@
         active.isContentEditable);
 
     if (
+      input &&
       (event.key === "/" || (event.ctrlKey && event.key === "f")) &&
       !isTyping
     ) {
@@ -315,7 +376,7 @@
       return;
     }
 
-    if (event.key === "Escape" && active === input) {
+    if (input && event.key === "Escape" && active === input) {
       event.preventDefault();
       input.value = "";
       input.dispatchEvent(new Event("input"));
@@ -323,7 +384,7 @@
       return;
     }
 
-    if (event.key === "t" && !isTyping) {
+    if (themeToggle && event.key === "t" && !isTyping) {
       event.preventDefault();
       themeToggle.click();
       return;
