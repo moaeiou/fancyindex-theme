@@ -48,11 +48,6 @@ location / {
     fancyindex_footer "/fancyindex-theme/footer.html";
     fancyindex_ignore "fancyindex-theme";
 }
-
-# Deny hidden files such as .git while allowing ACME challenges.
-location ~ /\.(?!well-known/) {
-    deny all;
-}
 ```
 
 To hide Fancy Index's generated path heading,
