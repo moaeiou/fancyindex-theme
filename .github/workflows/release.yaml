@@ -10,13 +10,13 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Create release
+    name: Like it never left.
 
     steps:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Get Version
+      - name: Get version
         id: get_version
         shell: bash
         run: echo "version=${{ github.sha }}" >> "$GITHUB_OUTPUT"
@@ -24,12 +24,7 @@ jobs:
       - name: Build!
         shell: bash
         run: |
-          release_dir="fancyindex-theme"
-          archive="${release_dir}-moaeiou.tar.gz"
-
-          cp index.html footer.html style.css fancyindex.js "${release_dir}/"
-          tar -czf "${archive}" "${release_dir}"
-          tar -tzf "${archive}"
+          tar -cvzf fancyindex-theme-moaeiou.tar.gz header.html footer.html style.css fancyindex.js
 
       - name: Release
         uses: softprops/action-gh-release@master
