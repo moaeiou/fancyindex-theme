@@ -26,6 +26,15 @@ tar -xzvf fancyindex-theme-moaeiou.tar.gz -C fancyindex-theme/
 rm fancyindex-theme-moaeiou.tar.gz
 ```
 
+Upgrade
+```bash
+cd /var/www/html
+wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
+mkdir -p fancyindex-theme/
+tar -xzvf fancyindex-theme-moaeiou.tar.gz -C fancyindex-theme/
+rm fancyindex-theme-moaeiou.tar.gz
+```
+
 ### 📚 Nginx config
 
 Load the module from the top level of `/etc/nginx/nginx.conf` 
