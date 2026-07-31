@@ -6,7 +6,6 @@
 
   const form = document.querySelector(".directory-controls form");
   const input = document.getElementById("search");
-  const heading = document.querySelector("h1");
   const themeToggle = document.querySelector(".theme-toggle");
   const resultsStatus = document.querySelector(".results-status");
   const body = document.body;
@@ -44,8 +43,6 @@
   }
 
   function updateBreadcrumbs() {
-    if (!heading) return;
-
     const breadcrumbNav = document.querySelector(".breadcrumb-nav");
     if (!breadcrumbNav) return;
 
@@ -97,11 +94,6 @@
     } else {
       rootLink.setAttribute("aria-current", "page");
     }
-
-    const displayPath = decodedParts.length
-      ? `/${decodedParts.join("/")}/`
-      : "/";
-    heading.textContent = `Index of ${displayPath}`;
   }
 
   updateBreadcrumbs();

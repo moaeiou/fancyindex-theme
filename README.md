@@ -49,6 +49,11 @@ location / {
     fancyindex_header "/fancyindex-theme/header.html";
     fancyindex_footer "/fancyindex-theme/footer.html";
     fancyindex_ignore "fancyindex-theme";
+    location ~* \.(?!html?|css|js)[^.]+$ {
+        alias /var/www/html/;
+        default_type application/octet-stream;
+        add_header Content-Disposition "attachment; filename=\"$uri\"" always;
+    }
 }
 ```
 
