@@ -20,17 +20,20 @@ distributions; the following example is for Debian:
 apt update
 apt install git nginx libnginx-mod-http-fancyindex
 cd /var/www/html
-wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
 mkdir -p fancyindex-theme/
-tar -xzvf fancyindex-theme-moaeiou.tar.gz -C fancyindex-theme/
+cd fancyindex-theme/
+wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
+tar -xzvf fancyindex-theme-moaeiou.tar.gz
 rm fancyindex-theme-moaeiou.tar.gz
+cd ..
 ```
 
 Upgrade
 ```bash
 cd /var/www/html
-wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
 mkdir -p fancyindex-theme/
+cd fancyindex-theme/
+wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
 tar -xzvf fancyindex-theme-moaeiou.tar.gz -C fancyindex-theme/
 rm fancyindex-theme-moaeiou.tar.gz
 ```
