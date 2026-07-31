@@ -20,9 +20,9 @@ distributions; the following example is for Debian:
 apt update
 apt install git nginx libnginx-mod-http-fancyindex
 cd /var/www/html
-git clone https://github.com/moaeiou/fancyindex-theme.git
-cd fancyindex-theme
-rm README.md
+git clone https://github.com/moaeiou/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
+tar -xzvf fancyindex-theme-moaeiou.tar.gz
+rm fancyindex-theme-moaeiou.tar.gz
 ```
 
 ### 📚 Nginx config
