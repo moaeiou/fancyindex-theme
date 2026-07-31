@@ -20,8 +20,9 @@ distributions; the following example is for Debian:
 apt update
 apt install git nginx libnginx-mod-http-fancyindex
 cd /var/www/html
-git clone https://github.com/moaeiou/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
-tar -xzvf fancyindex-theme-moaeiou.tar.gz
+wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
+mkdir -p fancyindex-theme/
+tar -xzvf fancyindex-theme-moaeiou.tar.gz -C fancyindex-theme/
 rm fancyindex-theme-moaeiou.tar.gz
 ```
 
@@ -49,11 +50,6 @@ location / {
     fancyindex_header "/fancyindex-theme/header.html";
     fancyindex_footer "/fancyindex-theme/footer.html";
     fancyindex_ignore "fancyindex-theme";
-    location ~* \.(?!html?|css|js)[^.]+$ {
-        alias /var/www/html/;
-        default_type application/octet-stream;
-        add_header Content-Disposition "attachment; filename=\"$uri\"" always;
-    }
 }
 ```
 

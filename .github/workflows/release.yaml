@@ -29,7 +29,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@master
         with:
-          tag_name: V${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.get_version.outputs.version }}
           files: fancyindex-theme-moaeiou.tar.gz
           body: |
             # 📝 Release Note
