@@ -9,7 +9,7 @@ Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 - A beautiful UI to get file fast any easy.
 - Support **Light and Dark** theme and aslo have autochange.
 - Just only **3 steps** to depoly in any can install nginx devices.
-- End file size about **7kb**! That is so small!
+- End file size about **8kb**! That is so small!
 
 ## 🔧 How to use
 
@@ -35,7 +35,7 @@ cd /var/www/html
 mkdir -p fancyindex-theme/
 cd fancyindex-theme/
 wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
-tar -xzvf fancyindex-theme-moaeiou.tar.gz -C fancyindex-theme/
+tar -xzvf fancyindex-theme-moaeiou.tar.gz
 rm fancyindex-theme-moaeiou.tar.gz
 ```
 

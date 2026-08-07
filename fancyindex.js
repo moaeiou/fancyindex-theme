@@ -47,11 +47,19 @@
       const name = decodedHref ?? cell.textContent;
       if (!name) return;
 
+      // Older module builds append sort state ("?C=N&O=A") to file links.
+      // Download managers then save files as "name.tar.gz?C=N&O=A". Drop the
+      // query from file links, but keep it on directory links so the sort
+      // order survives navigation into a folder.
+      const querylessHref = href.split("?")[0];
+      const isDirectory = querylessHref.endsWith("/");
+      const safeHref = isDirectory ? href : querylessHref;
+
       cell.replaceChildren();
 
       const link = document.createElement("a");
-      if (href) {
-        link.setAttribute("href", href);
+      if (safeHref) {
+        link.setAttribute("href", safeHref);
       } else {
         try {
           link.setAttribute("href", encodeURIComponent(name));
