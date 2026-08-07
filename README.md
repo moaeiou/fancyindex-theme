@@ -6,9 +6,10 @@ A modern, dependency-free theme for Nginx FancyIndex.
 
 Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 
-- Lightweight: plain HTML, CSS, and JavaScript
-- Responsive file listing with light and dark themes
-- Client-side search, breadcrumbs, pagination, and file icons
+- A beautiful UI to get file fast any easy.
+- Support **Light and Dark** theme and aslo have autochange.
+- Just only **3 steps** to depoly in any can install nginx devices.
+- End file size about **7kb**! That is so small!
 
 ## 🔧 How to use
 
@@ -28,7 +29,7 @@ rm fancyindex-theme-moaeiou.tar.gz
 cd ..
 ```
 
-Upgrade
+Update
 ```bash
 cd /var/www/html
 mkdir -p fancyindex-theme/

@@ -16,6 +16,57 @@
   const table = document.querySelector("#list");
   const tbody = table?.querySelector("tbody");
 
+  function sanitizeNameCells() {
+    if (!tbody) return;
+
+    // The fancyindex module (especially 0.5.x, which Debian ships) inserts
+    // file names into the listing without HTML-escaping them, so a file named
+    // e.g. `<img src=x onerror=alert(1)>` can smuggle markup into the page.
+    // Rebuild every name cell as plain text. The href is percent-encoded by
+    // the module, so it is the reliable source for the real file name. This
+    // is defense-in-depth; the CSP meta tag in header.html is what actually
+    // stops injected scripts from running.
+    Array.from(tbody.querySelectorAll("tr")).forEach((row) => {
+      const cell = row.querySelector("td");
+      if (!cell) return;
+
+      const originalLink = cell.querySelector("a");
+      const href = originalLink?.getAttribute("href") || "";
+
+      // The "Parent directory" row is static, module-generated content.
+      if (href.startsWith("../")) return;
+
+      const decodedHref = (() => {
+        if (!href) return null;
+        try {
+          return decodeURIComponent(href.split("?")[0]);
+        } catch {
+          return null;
+        }
+      })();
+      const name = decodedHref ?? cell.textContent;
+      if (!name) return;
+
+      cell.replaceChildren();
+
+      const link = document.createElement("a");
+      if (href) {
+        link.setAttribute("href", href);
+      } else {
+        try {
+          link.setAttribute("href", encodeURIComponent(name));
+        } catch {
+          /* unencodable name; leave the link without an href */
+        }
+      }
+      link.textContent = name;
+      link.title = name;
+      cell.appendChild(link);
+    });
+  }
+
+  sanitizeNameCells();
+
   const themeOptions = ["auto", "light", "dark"];
   let currentThemeIndex = 0;
 
@@ -131,12 +182,18 @@
   }
 
   const listItems = tbody ? Array.from(tbody.querySelectorAll("tr")) : [];
-  const parentItems = listItems.filter((item) =>
-    item.classList.contains("parent"),
-  );
-  const contentItems = listItems.filter(
-    (item) => !item.classList.contains("parent"),
-  );
+  const isParentRow = (item) => {
+    const link = item.querySelector("td a");
+    if (!link) return false;
+    const href = link.getAttribute("href") || "";
+    return (
+      href === "../" ||
+      href.startsWith("../?") ||
+      /^Parent directory/i.test(link.textContent || "")
+    );
+  };
+  const parentItems = listItems.filter(isParentRow);
+  const contentItems = listItems.filter((item) => !isParentRow(item));
   let filteredItems = [...contentItems];
   let currentPage = 1;
 
@@ -288,12 +345,12 @@
           return;
         }
 
-        const terms = searchValue.toLocaleLowerCase().split(/\s+/);
+        const terms = searchValue.toLowerCase().split(/\s+/);
 
         filteredItems = contentItems.filter((item) => {
           const text =
             item.querySelector("td")?.textContent.replace(/\s+/g, " ") || "";
-          const normalizedText = text.toLocaleLowerCase();
+          const normalizedText = text.toLowerCase();
           const matches = terms.every((term) => normalizedText.includes(term));
           item.hidden = !matches;
           return matches;
