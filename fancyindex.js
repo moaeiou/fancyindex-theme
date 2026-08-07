@@ -54,6 +54,7 @@
       const querylessHref = href.split("?")[0];
       const isDirectory = querylessHref.endsWith("/");
       const safeHref = isDirectory ? href : querylessHref;
+      const hasExtension = /\.[^/]+$/.test(name);
 
       cell.replaceChildren();
 
@@ -69,6 +70,13 @@
       }
       link.textContent = name;
       link.title = name;
+      if (!isDirectory && !hasExtension) {
+        // Download engines (Motrix/aria2 and friends) append ".bin" to
+        // extension-less binaries when the server sends no
+        // Content-Disposition header. Pin the exact file name so browsers
+        // and download-manager extensions keep it as-is.
+        link.setAttribute("download", name);
+      }
       cell.appendChild(link);
     });
   }
