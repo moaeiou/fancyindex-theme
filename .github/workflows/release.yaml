@@ -25,6 +25,7 @@ jobs:
         shell: bash
         run: |
           tar -cvf fancyindex-theme-moaeiou.tar.zst --zstd header.html footer.html style.css fancyindex.js
+          cp ./fancyindex-theme-moaeiou.tar.zst ./fit.tar.zst
 
       - name: Release
         uses: softprops/action-gh-release@master
@@ -40,6 +41,6 @@ jobs:
       - name: Send to mirror
         uses: moaeiou/moaeiou/actions/rsync@main
         with:
-          local: fancyindex-theme-moaeiou.tar.zst
+          local: fit.tar.zst
           remote: /var/www/html/
           key: ${{ secrets.CC_LA_KEY }}
