@@ -15,9 +15,13 @@ Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 
 If you not using Debian GNU/Linux, Try to self compile nginx and add fancyindex module.
 
-The following example is for Debian:
+BTW: if you need using mirror by MoAEIOU, it named `fit.tar.zst` 
+
+That because `fancyindex_ignore "fancyindex-theme";` will be ignore any called `fancyindex-theme` file.
 
 Make sure you are riding at `/var/www/html`
+
+The following install example for Debian:
 
 ```bash
 apt update
