@@ -9,16 +9,20 @@ Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 - A beautiful UI to get file fast any easy.
 - Support **Light and Dark** theme and aslo have autochange.
 - Just only **3 steps** to depoly in any can install nginx devices.
-- End file size about **8kb**! That is so small!
+- End file size about **9kb**! That is so small!
 
 ## 🔧 How to use
+
 If you not using Debian GNU/Linux, Try to self compile nginx and add fancyindex module.
 
 The following example is for Debian:
 
+Make sure you are riding at `/var/www/html`
+
 ```bash
 apt update
 apt install wget nginx libnginx-mod-http-fancyindex
+rm -rf fancyindex-theme/
 mkdir -p fancyindex-theme/
 cd fancyindex-theme/
 wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.zst
@@ -28,13 +32,15 @@ cd ..
 ```
 
 Update
+
 ```bash
-cd /var/www/html
+rm -rf fancyindex-theme/
 mkdir -p fancyindex-theme/
 cd fancyindex-theme/
 wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.zst
 tar -xvf fancyindex-theme-moaeiou.tar.zst
 rm fancyindex-theme-moaeiou.tar.zst
+cd ..
 ```
 
 ## 📚 Nginx config
@@ -71,7 +77,7 @@ location / {
     fancyindex_ignore "fancyindex-theme";
     if ($uri !~ /$) {
         add_header Content-Disposition 'attachment; filename="$download_name"' always;
-    }        
+    }
 }
 ```
 
@@ -83,6 +89,7 @@ systemctl reload nginx
 ```
 
 ## ⚖️ LICENSE
+
 This version is licensed under the [MoPL](https://867678.xyz/doc/MoPL).
 
 The source LICENSE was under MIT with Copyright © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
