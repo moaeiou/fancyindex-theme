@@ -19,12 +19,11 @@ The following example is for Debian:
 ```bash
 apt update
 apt install wget nginx libnginx-mod-http-fancyindex
-cd /var/www/html
 mkdir -p fancyindex-theme/
 cd fancyindex-theme/
-wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
-tar -xzvf fancyindex-theme-moaeiou.tar.gz
-rm fancyindex-theme-moaeiou.tar.gz
+wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.zst
+tar -xvf fancyindex-theme-moaeiou.tar.zst
+rm fancyindex-theme-moaeiou.tar.zst
 cd ..
 ```
 
@@ -33,9 +32,9 @@ Update
 cd /var/www/html
 mkdir -p fancyindex-theme/
 cd fancyindex-theme/
-wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.gz
-tar -xzvf fancyindex-theme-moaeiou.tar.gz
-rm fancyindex-theme-moaeiou.tar.gz
+wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.zst
+tar -xvf fancyindex-theme-moaeiou.tar.zst
+rm fancyindex-theme-moaeiou.tar.zst
 ```
 
 ## 📚 Nginx config

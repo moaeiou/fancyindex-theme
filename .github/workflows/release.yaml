@@ -24,15 +24,22 @@ jobs:
       - name: Build!
         shell: bash
         run: |
-          tar -cvzf fancyindex-theme-moaeiou.tar.gz header.html footer.html style.css fancyindex.js
+          tar -cvf fancyindex-theme-moaeiou.tar.zst --zstd header.html footer.html style.css fancyindex.js
 
       - name: Release
         uses: softprops/action-gh-release@master
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          files: fancyindex-theme-moaeiou.tar.gz
+          files: fancyindex-theme-moaeiou.tar.zst
           body: |
             # 📝 Release Note
             - Fixes and improvements
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Send to mirror
+        uses: moaeiou/moaeiou/actions/rsync@main
+        with:
+          local: fancyindex-theme-moaeiou.tar.zst
+          remote: /var/www/html/
+          key: ${{ secrets.CC_LA_KEY }}
