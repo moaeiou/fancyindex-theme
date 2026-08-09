@@ -55,17 +55,6 @@ Include the `fancyindex` module first, add it in the header of nginx config
 include /etc/nginx/modules-enabled/*.conf;
 ```
 
-`http` part, add this.
-
-Else filename may happen some unexpected changes.
-
-```ini
-map $uri $download_name {
-    ~/(?<basename>[^/]+)$ $basename;
-    default "";
-}
-```
-
 `location` part.
 
 ```ini
@@ -79,9 +68,6 @@ location / {
     fancyindex_header "/fancyindex-theme/header.html";
     fancyindex_footer "/fancyindex-theme/footer.html";
     fancyindex_ignore "fancyindex-theme";
-    if ($uri !~ /$) {
-        add_header Content-Disposition 'attachment; filename="$download_name"' always;
-    }
 }
 ```
 
