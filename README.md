@@ -1,4 +1,4 @@
-# fancyindex-theme
+# FancyIndex-Theme
 
 A modern, freedom, fastly, easy-to-use, FancyIndex-Theme.
 
@@ -13,15 +13,15 @@ Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 
 ## 🔧 How to use
 
-If you not using Debian GNU/Linux, Try to self compile nginx and add fancyindex module.
+> If you not using Debian GNU/Linux and software source not have fancyindex module, Please try to self build nginx and addital fancyindex module.
+>
+> Make sure you are riding at `/var/www/html`
 
-BTW: if you need using mirror by MoAEIOU, it named `fit.tar.zst` 
+### ⬇️ Install for Debian:
 
-That because `fancyindex_ignore "fancyindex-theme";` will be ignore any called `fancyindex-theme` file.
-
-Make sure you are riding at `/var/www/html`
-
-The following install example for Debian:
+> For based on Fedora, change pm to dnf/rpm and install `nginx-mod-fancyindex`.
+>
+> And from line 3 next.
 
 ```bash
 apt update
@@ -29,33 +29,33 @@ apt install wget nginx libnginx-mod-http-fancyindex
 rm -rf fancyindex-theme/
 mkdir -p fancyindex-theme/
 cd fancyindex-theme/
-wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.zst
-tar -xvf fancyindex-theme-moaeiou.tar.zst
-rm fancyindex-theme-moaeiou.tar.zst
+wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fit-moaeiou.tar.zst
+tar -xvf fit-moaeiou.tar.zst
+rm fit-moaeiou.tar.zst
 cd ..
 ```
 
-Update
+### ⬆️ Update
 
 ```bash
 rm -rf fancyindex-theme/
 mkdir -p fancyindex-theme/
 cd fancyindex-theme/
-wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fancyindex-theme-moaeiou.tar.zst
-tar -xvf fancyindex-theme-moaeiou.tar.zst
-rm fancyindex-theme-moaeiou.tar.zst
+wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fit-moaeiou.tar.zst
+tar -xvf fit-moaeiou.tar.zst
+rm fit-moaeiou.tar.zst
 cd ..
 ```
 
-## 📚 Nginx config
+### 📶 Nginx
 
-Include the `fancyindex` module first, add it in the header of nginx config
+> Include the `fancyindex` module first, add it in the header of nginx config
 
 ```ini
 include /etc/nginx/modules-enabled/*.conf;
 ```
 
-`location` part.
+> `location` part.
 
 ```ini
 location / {
@@ -71,7 +71,7 @@ location / {
 }
 ```
 
-Validate and reload the configuration:
+> Validate and reload the configuration:
 
 ```bash
 nginx -t
@@ -80,6 +80,6 @@ systemctl reload nginx
 
 ## ⚖️ LICENSE
 
-This version is licensed under the [MoPL](https://867678.xyz/doc/MoPL).
+This project was licensed under the [MoPL](https://867678.xyz/doc/MoPL).
 
-The source LICENSE was under MIT with Copyright © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
+The source was licensed under MIT with Copyright © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
