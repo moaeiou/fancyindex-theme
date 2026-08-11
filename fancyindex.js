@@ -163,6 +163,14 @@
     }
   }
 
+  function updatePageTitle() {
+    const rawPath = window.location.pathname;
+    const displayPath =
+      rawPath.length > 1 ? rawPath.replace(/\/+$/, "") : rawPath || "/";
+    document.title = `${displayPath} | MoAEIOU`;
+  }
+
+  updatePageTitle();
   updateBreadcrumbs();
 
   const copyBtn = document.querySelector(".copy-page-url-btn");

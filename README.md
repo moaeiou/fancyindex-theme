@@ -80,6 +80,6 @@ systemctl reload nginx
 
 ## ⚖️ LICENSE
 
-This project was licensed under the [MoPL](https://867678.xyz/doc/MoPL).
+This project was licensed under the [MoPL](https://867678.xyz/docs/mopl).
 
 The source was licensed under MIT with Copyright © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
