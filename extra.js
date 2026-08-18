@@ -4,13 +4,7 @@
 import { readFileSync, writeFileSync } from "fs";
 
 const [src, dest] = process.argv.slice(2);
-if (!src || !dest) {
-  console.error("usage: minify-html.js <src> <dest>");
-  process.exit(1);
-}
 
-// Fancyindex header/footer are document fragments. A real HTML parser
-// would invent the missing </body></html> and break the assembled page.
 const minified = readFileSync(src, "utf8")
   .replace(/<!--[\s\S]*?-->/g, "")
   .replace(/<[^>]+>/g, (tag) =>

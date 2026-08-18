@@ -61,7 +61,9 @@ include /etc/nginx/modules-enabled/*.conf;
 
 > `location` part.
 >
-> If you not add `default_type` and Content-Disposition, file with no suffix will save as `name.bin` in Chrome / aria2-next / Motrix.
+> Content-Disposition pin the real name for aria2 / wget.
+>
+> Do **not** change `default_type` to `application/x-binary`. Motrix Next will not trust a no-suffix name, then it look at Content-Type to guess a suffix. x-binary it not know, so you get 未捕获的文件名 / `unresolved-filename`.
 >
 > File that already have suffix still can preview, we not touch them.
 
@@ -69,11 +71,6 @@ include /etc/nginx/modules-enabled/*.conf;
 location / {
     alias /var/www/html/;
     include mime.types;
-    default_type application/x-binary;
-    if ($uri ~* "/([^/.]+)$") {
-        set $fancyindex_cd "attachment; filename=\"$1\"";
-    }
-    add_header Content-Disposition $fancyindex_cd;
     fancyindex on;
     fancyindex_localtime on;
     fancyindex_show_path off;

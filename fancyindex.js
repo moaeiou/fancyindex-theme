@@ -143,8 +143,6 @@
         const querylessHref = href.split("?")[0];
         const isDirectory = querylessHref.endsWith("/");
         const safeHref = isDirectory ? href : querylessHref;
-        const baseName = name.replace(/\/+$/, "").split("/").pop() || name;
-        const hasExtension = /\.[^/]+$/.test(baseName);
 
         cell.replaceChildren();
 
@@ -160,12 +158,6 @@
         }
         link.textContent = name;
         link.title = name;
-        if (!isDirectory && !hasExtension) {
-          // Native browser downloads honor this. aria2-next / Chrome still
-          // append ".bin" to extension-less files unless nginx sends
-          // Content-Disposition and a non-octet-stream type (see README).
-          link.setAttribute("download", baseName);
-        }
         cell.appendChild(link);
       });
     }
@@ -264,17 +256,7 @@
       document.title = `${displayPath} | ${SITE_NAME}`;
     }
 
-    function updateHeading() {
-      const heading = document.querySelector("h1");
-      if (!heading) return;
-      const { decodedParts } = pathParts();
-      heading.textContent = decodedParts.length
-        ? decodedParts[decodedParts.length - 1]
-        : SITE_NAME;
-    }
-
     updatePageTitle();
-    updateHeading();
     updateBreadcrumbs();
 
     const copyBtn = document.querySelector(".copy-page-url-btn");
