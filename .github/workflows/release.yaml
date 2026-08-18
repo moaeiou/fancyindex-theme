@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@main
         with:
-          node-version: 'latest'
+          node-version: "latest"
 
       - name: Build!
         shell: bash

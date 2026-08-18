@@ -67,7 +67,7 @@ html.theme-dark {
 }
 
 html {
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: var(--muted);
   font-weight: 300;
   font-size: clamp(14px, 1.2vw, 16px);

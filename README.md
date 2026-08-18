@@ -91,22 +91,6 @@ nginx -t
 systemctl reload nginx
 ```
 
-### ✏️ If you not at `/`
-
-> Theme path and Root is `/fancyindex-theme` and `/` by default.
->
-> If your list is not at web root, change the path in `header.html` (css / js).
->
-> You can also put this on the `<html>` tag:
-
-```html
-<html
-  lang="en"
-  data-site-name="MoAEIOU"
-  data-theme-base="/fancyindex-theme"
->
-```
-
 ## ⚖️ LICENSE
 
 This project licensed under the [MoPL](https://867678.xyz/docs/mopl).
