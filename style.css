@@ -286,41 +286,6 @@ td a {
   display: block;
 }
 
-.file-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-}
-
-.file-cell a {
-  flex: 1;
-  min-width: 0;
-}
-
-.copy-file-url-btn {
-  appearance: none;
-  flex-shrink: 0;
-  border: 1px solid var(--rule);
-  background: var(--bg);
-  color: var(--fg);
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
-  font: 400 0.75rem/1.2 system-ui, sans-serif;
-  cursor: pointer;
-  transition: all 150ms ease-in;
-}
-
-.copy-file-url-btn:hover {
-  background: var(--row-hover);
-  border-color: var(--accent);
-}
-
-.copy-file-url-btn:focus-visible {
-  outline: none;
-  box-shadow: var(--focus);
-}
-
 #list tbody tr td:first-child a::before {
   content: "📄";
   margin-right: 0.5rem;
@@ -695,14 +660,5 @@ footer a {
     padding: 0.4rem 0.75rem;
     margin-left: 0;
     margin-top: 0.5rem;
-  }
-
-  td:first-child {
-    align-items: center;
-  }
-
-  .file-cell {
-    flex: 1;
-    min-width: 0;
   }
 }

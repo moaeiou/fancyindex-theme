@@ -9,7 +9,7 @@ Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 - A beautiful UI to get file fast any easy.
 - Support **Light and Dark** theme and aslo have autochange. No flash when open.
 - Search, and the word stay in URL so you can share it.
-- Copy page URL or any file / folder link in one click.
+- Copy page URL in one click. File link just right click the name.
 - Just only **3 steps** to depoly in any can install nginx devices.
 - Release is minify! End file size still so small.
 

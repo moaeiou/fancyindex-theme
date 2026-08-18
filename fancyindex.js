@@ -105,14 +105,6 @@
     }, 2000);
   }
 
-  function absoluteUrl(href) {
-    try {
-      return new URL(href, window.location.href).href;
-    } catch {
-      return href;
-    }
-  }
-
   function sanitizeNameCells() {
     if (!tbody) return;
 
@@ -156,9 +148,6 @@
 
       cell.replaceChildren();
 
-      const wrap = document.createElement("div");
-      wrap.className = "file-cell";
-
       const link = document.createElement("a");
       if (safeHref) {
         link.setAttribute("href", safeHref);
@@ -177,17 +166,7 @@
         // Content-Disposition and a non-octet-stream type (see README).
         link.setAttribute("download", baseName);
       }
-      wrap.appendChild(link);
-
-      const copyBtn = document.createElement("button");
-      copyBtn.type = "button";
-      copyBtn.className = "copy-file-url-btn";
-      copyBtn.textContent = "Copy";
-      copyBtn.setAttribute("aria-label", `Copy link to ${baseName}`);
-      copyBtn.dataset.href = querylessHref || "";
-      wrap.appendChild(copyBtn);
-
-      cell.appendChild(wrap);
+      cell.appendChild(link);
     });
   }
 
@@ -205,21 +184,6 @@
 
   sanitizeNameCells();
   applyColumnLabels();
-
-  if (tbody) {
-    tbody.addEventListener("click", async (event) => {
-      const button = event.target.closest(".copy-file-url-btn");
-      if (!button || !tbody.contains(button)) return;
-      const href = button.dataset.href;
-      if (!href) return;
-      try {
-        await copyText(absoluteUrl(href));
-        flashButton(button, "Copied!");
-      } catch {
-        flashButton(button, "Failed");
-      }
-    });
-  }
 
   const themeOptions = ["auto", "light", "dark"];
   let currentThemeIndex = 0;
