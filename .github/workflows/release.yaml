@@ -21,10 +21,21 @@ jobs:
         shell: bash
         run: echo "version=$(date +%s)" >> "$GITHUB_OUTPUT"
 
+      - name: Setup Node.js
+        uses: actions/setup-node@main
+        with:
+          node-version: 'latest'
+
       - name: Build!
         shell: bash
         run: |
-          tar -cvf fit-moaeiou.tar.zst --zstd header.html footer.html style.css fancyindex.js
+          mkdir -p dist
+          npx --yes esbuild fancyindex.js --minify --legal-comments=none --outfile=dist/fancyindex.js
+          npx --yes esbuild style.css --minify --legal-comments=none --outfile=dist/style.css
+          node extra.js header.html dist/header.html
+          node extra.js footer.html dist/footer.html
+          tar -C dist -cvf fit-moaeiou.tar.zst --zstd \
+            header.html footer.html style.css fancyindex.js
 
       - name: Release
         uses: softprops/action-gh-release@master

@@ -4,6 +4,30 @@
   const THEME_STORAGE_KEY = "fancyindex-theme";
   const ITEMS_PER_PAGE = 100;
 
+  {
+    let theme = "auto";
+    try {
+      theme = localStorage.getItem(THEME_STORAGE_KEY) || "auto";
+    } catch {
+      theme = "auto";
+    }
+    if (theme !== "light" && theme !== "dark") theme = "auto";
+    const actual =
+      theme === "auto"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
+        : theme;
+    const root = document.documentElement;
+    root.classList.remove("theme-light", "theme-dark");
+    root.classList.add(`theme-${actual}`);
+    root.style.colorScheme = actual;
+  }
+
+  function start() {
+  const SITE_NAME =
+    document.documentElement.getAttribute("data-site-name") || "MoAEIOU";
+
   const form = document.querySelector(".directory-controls form");
   const input = document.getElementById("search");
   const themeToggle = document.querySelector(".theme-toggle");
@@ -15,6 +39,79 @@
   );
   const table = document.querySelector("#list");
   const tbody = table?.querySelector("tbody");
+
+  function detectThemeBase() {
+    const fromHtml = document.documentElement.getAttribute("data-theme-base");
+    if (fromHtml) return fromHtml.replace(/\/+$/, "") || "/";
+    const script = document.querySelector('script[src*="fancyindex.js"]');
+    const src = script?.getAttribute("src") || "";
+    const match = src.match(/^(.*)\/fancyindex\.js(?:\?.*)?$/);
+    return match ? match[1] : "/fancyindex-theme";
+  }
+
+  function detectSiteRoot(themeBase) {
+    const withoutTheme = themeBase.replace(/\/fancyindex-theme$/i, "");
+    if (!withoutTheme) return "/";
+    return withoutTheme.endsWith("/") ? withoutTheme : `${withoutTheme}/`;
+  }
+
+  const themeBase = detectThemeBase();
+  const siteRoot = detectSiteRoot(themeBase);
+
+  function decodePathPart(part) {
+    try {
+      return decodeURIComponent(part);
+    } catch {
+      return part;
+    }
+  }
+
+  function pathParts() {
+    const encoded = window.location.pathname.split("/").filter(Boolean);
+    const rootParts = siteRoot.split("/").filter(Boolean);
+    const prefixLength =
+      rootParts.length && rootParts.every((part, i) => encoded[i] === part)
+        ? rootParts.length
+        : 0;
+    const encodedParts = encoded.slice(prefixLength);
+    return {
+      encodedParts,
+      decodedParts: encodedParts.map(decodePathPart),
+    };
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    try {
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      if (!document.execCommand("copy")) throw new Error("Copy failed");
+    } finally {
+      textarea.remove();
+    }
+  }
+
+  function flashButton(button, text) {
+    const originalText = button.textContent;
+    button.textContent = text;
+    setTimeout(() => {
+      button.textContent = originalText;
+    }, 2000);
+  }
+
+  function absoluteUrl(href) {
+    try {
+      return new URL(href, window.location.href).href;
+    } catch {
+      return href;
+    }
+  }
 
   function sanitizeNameCells() {
     if (!tbody) return;
@@ -54,9 +151,13 @@
       const querylessHref = href.split("?")[0];
       const isDirectory = querylessHref.endsWith("/");
       const safeHref = isDirectory ? href : querylessHref;
-      const hasExtension = /\.[^/]+$/.test(name);
+      const baseName = name.replace(/\/+$/, "").split("/").pop() || name;
+      const hasExtension = /\.[^/]+$/.test(baseName);
 
       cell.replaceChildren();
+
+      const wrap = document.createElement("div");
+      wrap.className = "file-cell";
 
       const link = document.createElement("a");
       if (safeHref) {
@@ -71,17 +172,54 @@
       link.textContent = name;
       link.title = name;
       if (!isDirectory && !hasExtension) {
-        // Download engines (Motrix/aria2 and friends) append ".bin" to
-        // extension-less binaries when the server sends no
-        // Content-Disposition header. Pin the exact file name so browsers
-        // and download-manager extensions keep it as-is.
-        link.setAttribute("download", name);
+        // Native browser downloads honor this. aria2-next / Chrome still
+        // append ".bin" to extension-less files unless nginx sends
+        // Content-Disposition and a non-octet-stream type (see README).
+        link.setAttribute("download", baseName);
       }
-      cell.appendChild(link);
+      wrap.appendChild(link);
+
+      const copyBtn = document.createElement("button");
+      copyBtn.type = "button";
+      copyBtn.className = "copy-file-url-btn";
+      copyBtn.textContent = "Copy";
+      copyBtn.setAttribute("aria-label", `Copy link to ${baseName}`);
+      copyBtn.dataset.href = querylessHref || "";
+      wrap.appendChild(copyBtn);
+
+      cell.appendChild(wrap);
+    });
+  }
+
+  function applyColumnLabels() {
+    if (!table || !tbody) return;
+    const headers = Array.from(table.querySelectorAll("thead th")).map((th) =>
+      th.textContent.replace(/\s+/g, " ").trim(),
+    );
+    tbody.querySelectorAll("tr").forEach((row) => {
+      Array.from(row.children).forEach((cell, index) => {
+        if (headers[index]) cell.setAttribute("data-label", headers[index]);
+      });
     });
   }
 
   sanitizeNameCells();
+  applyColumnLabels();
+
+  if (tbody) {
+    tbody.addEventListener("click", async (event) => {
+      const button = event.target.closest(".copy-file-url-btn");
+      if (!button || !tbody.contains(button)) return;
+      const href = button.dataset.href;
+      if (!href) return;
+      try {
+        await copyText(absoluteUrl(href));
+        flashButton(button, "Copied!");
+      } catch {
+        flashButton(button, "Failed");
+      }
+    });
+  }
 
   const themeOptions = ["auto", "light", "dark"];
   let currentThemeIndex = 0;
@@ -123,23 +261,15 @@
 
     const rootLi = document.createElement("li");
     const rootLink = document.createElement("a");
-    rootLink.href = "/";
+    rootLink.href = siteRoot;
     rootLink.textContent = "Root";
     rootLi.appendChild(rootLink);
     breadcrumbList.appendChild(rootLi);
 
-    const encodedParts = window.location.pathname.split("/").filter(Boolean);
-    const decodedParts = encodedParts.map((part) => {
-      try {
-        return decodeURIComponent(part);
-      } catch {
-        return part;
-      }
-    });
+    const { encodedParts, decodedParts } = pathParts();
 
-    // Path
     if (encodedParts.length) {
-      let currentPath = "/";
+      let currentPath = siteRoot.endsWith("/") ? siteRoot : `${siteRoot}/`;
 
       decodedParts.forEach((part, index) => {
         currentPath += `${encodedParts[index]}/`;
@@ -167,40 +297,30 @@
     const rawPath = window.location.pathname;
     const displayPath =
       rawPath.length > 1 ? rawPath.replace(/\/+$/, "") : rawPath || "/";
-    document.title = `${displayPath} | MoAEIOU`;
+    document.title = `${displayPath} | ${SITE_NAME}`;
+  }
+
+  function updateHeading() {
+    const heading = document.querySelector("h1");
+    if (!heading) return;
+    const { decodedParts } = pathParts();
+    heading.textContent = decodedParts.length
+      ? decodedParts[decodedParts.length - 1]
+      : SITE_NAME;
   }
 
   updatePageTitle();
+  updateHeading();
   updateBreadcrumbs();
 
   const copyBtn = document.querySelector(".copy-page-url-btn");
   if (copyBtn) {
     copyBtn.addEventListener("click", async () => {
-      const url = window.location.href;
-      const originalText = copyBtn.textContent;
       try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(url);
-        } else {
-          // https://stackoverflow.com/a/33928558
-          const textarea = document.createElement("textarea");
-          textarea.value = url;
-          document.body.appendChild(textarea);
-          try {
-            textarea.select();
-            textarea.setSelectionRange(0, textarea.value.length);
-            if (!document.execCommand("copy")) throw new Error("Copy failed");
-          } finally {
-            textarea.remove();
-          }
-        }
-        copyBtn.textContent = "Copied!";
+        await copyText(window.location.href);
+        flashButton(copyBtn, "Copied!");
       } catch {
-        copyBtn.textContent = "Failed";
-      } finally {
-        setTimeout(() => {
-          copyBtn.textContent = originalText;
-        }, 2000);
+        flashButton(copyBtn, "Failed");
       }
     });
   }
@@ -309,6 +429,54 @@
     return btn;
   }
 
+  function persistSearch(query) {
+    const url = new URL(window.location.href);
+    if (query) url.searchParams.set("q", query);
+    else url.searchParams.delete("q");
+    history.replaceState(null, "", url);
+
+    table?.querySelectorAll("thead a[href]").forEach((link) => {
+      try {
+        const href = link.getAttribute("href");
+        if (!href) return;
+        const next = new URL(href, window.location.href);
+        if (query) next.searchParams.set("q", query);
+        else next.searchParams.delete("q");
+        link.setAttribute("href", `${next.pathname}${next.search}`);
+      } catch {
+        /* ignore unparseable sort links */
+      }
+    });
+  }
+
+  function applySearch(rawQuery) {
+    const searchValue = rawQuery.trim();
+
+    if (!searchValue) {
+      filteredItems = [...contentItems];
+      contentItems.forEach((item) => (item.hidden = false));
+      currentPage = 1;
+      persistSearch("");
+      renderPage();
+      return;
+    }
+
+    const terms = searchValue.toLowerCase().split(/\s+/);
+
+    filteredItems = contentItems.filter((item) => {
+      const text =
+        item.querySelector("td a")?.textContent.replace(/\s+/g, " ") || "";
+      const normalizedText = text.toLowerCase();
+      const matches = terms.every((term) => normalizedText.includes(term));
+      item.hidden = !matches;
+      return matches;
+    });
+
+    currentPage = 1;
+    persistSearch(searchValue);
+    renderPage();
+  }
+
   function renderPage({ shouldScroll = false } = {}) {
     if (!tbody) return;
 
@@ -359,29 +527,7 @@
     function () {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
-        const searchValue = this.value.trim();
-
-        if (!searchValue) {
-          filteredItems = [...contentItems];
-          contentItems.forEach((item) => (item.hidden = false));
-          currentPage = 1;
-          renderPage();
-          return;
-        }
-
-        const terms = searchValue.toLowerCase().split(/\s+/);
-
-        filteredItems = contentItems.filter((item) => {
-          const text =
-            item.querySelector("td")?.textContent.replace(/\s+/g, " ") || "";
-          const normalizedText = text.toLowerCase();
-          const matches = terms.every((term) => normalizedText.includes(term));
-          item.hidden = !matches;
-          return matches;
-        });
-
-        currentPage = 1;
-        renderPage();
+        applySearch(this.value);
       }, 150);
     },
     { passive: true },
@@ -413,15 +559,16 @@
       mediaQuery.removeEventListener("change", handleSystemThemeChange);
     }
 
+    document.documentElement.classList.remove("theme-light", "theme-dark");
+    document.documentElement.classList.add(`theme-${actualTheme}`);
+    document.documentElement.style.colorScheme = actualTheme;
     body.classList.remove("theme-light", "theme-dark");
-    body.classList.add(`theme-${actualTheme}`);
   }
 
   function handleSystemThemeChange() {
     if (getStoredTheme() === "auto") applyTheme("auto");
   }
 
-  // Initialize theme
   const savedTheme = getStoredTheme();
   const storedTheme = themeOptions.includes(savedTheme) ? savedTheme : "auto";
   if (storedTheme !== savedTheme) storeTheme(storedTheme);
@@ -431,39 +578,29 @@
   updateThemeButton();
 
   document.addEventListener("keydown", (event) => {
-    const active = document.activeElement;
-    const isTyping =
-      active &&
-      (active.tagName === "INPUT" ||
-        active.tagName === "TEXTAREA" ||
-        active.isContentEditable);
-
     if (
-      input &&
-      (event.key === "/" || (event.ctrlKey && event.key === "f")) &&
-      !isTyping
+      !input ||
+      event.altKey ||
+      event.key !== "f" ||
+      !(event.ctrlKey || event.metaKey)
     ) {
-      event.preventDefault();
-      input.focus();
-      input.select();
       return;
     }
-
-    if (input && event.key === "Escape" && active === input) {
-      event.preventDefault();
-      input.value = "";
-      input.dispatchEvent(new Event("input"));
-      input.blur();
-      return;
-    }
-
-    if (themeToggle && event.key === "t" && !isTyping) {
-      event.preventDefault();
-      themeToggle.click();
-      return;
-    }
+    event.preventDefault();
+    input.focus();
+    input.select();
   });
 
-  // Initial render
-  renderPage();
+  const initialQuery =
+    new URLSearchParams(window.location.search).get("q") || "";
+  if (input && initialQuery) input.value = initialQuery;
+  if (initialQuery) applySearch(initialQuery);
+  else renderPage();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
 })();

@@ -1,15 +1,9 @@
-/* =========================
-   Box-sizing reset
-   ========================= */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* =========================
-   Reduced-motion preference
-   ========================= */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -21,9 +15,6 @@
   }
 }
 
-/* =========================
-   Theme tokens (Light — default)
-   ========================= */
 :root {
   --bg: #f4f6fb;
   --bg-elev: #ffffff;
@@ -47,10 +38,12 @@
   --toggle-hover-bg: #dbe3f5;
 }
 
-/* =========================
-   Theme tokens (Dark)
-   ========================= */
-body.theme-dark {
+html.theme-light {
+  color-scheme: light;
+}
+
+html.theme-dark {
+  color-scheme: dark;
   --bg: #2f343f;
   --bg-elev: #262a32;
   --fg: #ffffff;
@@ -73,21 +66,8 @@ body.theme-dark {
   --toggle-hover-bg: #2a2f3a;
 }
 
-/* =========================
-   Global typography
-   https://css-tricks.com/snippets/css/system-font-stack/
-   ========================= */
 html {
-  font-family:
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    Ubuntu,
-    Cantarell,
-    "Noto Sans",
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji";
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--muted);
   font-weight: 300;
   font-size: clamp(14px, 1.2vw, 16px);
@@ -98,8 +78,6 @@ html {
 
 body {
   margin: 0;
-  justify-content: center;
-  align-items: flex-start;
   min-height: 100vh;
   padding: clamp(12px, 2.5vw, 24px);
   color: var(--fg);
@@ -109,9 +87,6 @@ body {
     color 150ms ease-in;
 }
 
-/* =========================
-   Headings and table headers
-   ========================= */
 h1 {
   font-weight: 300;
   text-align: center;
@@ -125,9 +100,6 @@ thead {
   font-size: 1.2em;
 }
 
-/* =========================
-   Directory controls: search + theme toggle
-   ========================= */
 .directory-controls {
   display: flex;
   flex-direction: column;
@@ -144,9 +116,6 @@ thead {
   }
 }
 
-/* =========================
-   Links
-   ========================= */
 a {
   color: var(--link);
   text-decoration: none;
@@ -156,7 +125,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Subtle action links (e.g. reset search) */
 a.clear,
 a.clear:link,
 a.clear:visited {
@@ -175,9 +143,6 @@ a.clear:hover {
   border-bottom-color: currentColor;
 }
 
-/* =========================
-   Theme toggle button
-   ========================= */
 .theme-toggle {
   appearance: none;
   border-radius: 999px;
@@ -186,8 +151,7 @@ a.clear:hover {
   color: var(--toggle-fg);
   padding: 0.35rem 1.2rem;
   font:
-    500 0.9rem/1.2 "Roboto",
-    system-ui,
+    500 0.9rem/1.2 system-ui,
     sans-serif;
   cursor: pointer;
   transition:
@@ -207,13 +171,6 @@ a.clear:hover {
   box-shadow: var(--focus);
 }
 
-.theme-toggle[aria-pressed="true"] {
-  font-weight: 600;
-}
-
-/* =========================
-   Search input
-   ========================= */
 input {
   display: block;
   margin: 0 auto;
@@ -225,8 +182,7 @@ input {
   border: 1px solid var(--input-border);
   border-radius: 6px;
   font:
-    300 0.95rem/1.2 "Roboto",
-    system-ui,
+    300 0.95rem/1.2 system-ui,
     sans-serif;
   transition:
     border-color 150ms ease-in,
@@ -257,9 +213,6 @@ input:focus-visible {
   font-size: 0.9rem;
 }
 
-/* =========================
-   Table
-   ========================= */
 table {
   border-collapse: collapse;
   font-size: 0.95em;
@@ -300,7 +253,7 @@ th {
   background: #e3e8f1;
 }
 
-body.theme-dark th {
+html.theme-dark th {
   color: #8a94a6;
   background: #1f222b;
 }
@@ -333,12 +286,41 @@ td a {
   display: block;
 }
 
-/* =========================
-   File-type emoji icons via ::before
-   https://stackoverflow.com/a/60198998
-   ========================= */
+.file-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
 
-/* Default: generic file */
+.file-cell a {
+  flex: 1;
+  min-width: 0;
+}
+
+.copy-file-url-btn {
+  appearance: none;
+  flex-shrink: 0;
+  border: 1px solid var(--rule);
+  background: var(--bg);
+  color: var(--fg);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font: 400 0.75rem/1.2 system-ui, sans-serif;
+  cursor: pointer;
+  transition: all 150ms ease-in;
+}
+
+.copy-file-url-btn:hover {
+  background: var(--row-hover);
+  border-color: var(--accent);
+}
+
+.copy-file-url-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
 #list tbody tr td:first-child a::before {
   content: "📄";
   margin-right: 0.5rem;
@@ -346,138 +328,122 @@ td a {
   font-style: normal;
 }
 
-/* Directory */
-#list tbody tr td:first-child a[href$="/"]::before {
+#list tbody tr td:first-child a[href$="/" i]::before {
   content: "📁";
 }
 
-/* Parent directory */
 #list tbody tr.parent td:first-child a::before {
   content: "⬆️";
 }
 
-/* Images */
-#list tbody tr td:first-child a[href$=".jpg"]::before,
-#list tbody tr td:first-child a[href$=".jpeg"]::before,
-#list tbody tr td:first-child a[href$=".png"]::before,
-#list tbody tr td:first-child a[href$=".gif"]::before,
-#list tbody tr td:first-child a[href$=".svg"]::before,
-#list tbody tr td:first-child a[href$=".webp"]::before,
-#list tbody tr td:first-child a[href$=".ico"]::before,
-#list tbody tr td:first-child a[href$=".bmp"]::before {
+#list tbody tr td:first-child a[href$=".jpg" i]::before,
+#list tbody tr td:first-child a[href$=".jpeg" i]::before,
+#list tbody tr td:first-child a[href$=".png" i]::before,
+#list tbody tr td:first-child a[href$=".gif" i]::before,
+#list tbody tr td:first-child a[href$=".svg" i]::before,
+#list tbody tr td:first-child a[href$=".webp" i]::before,
+#list tbody tr td:first-child a[href$=".ico" i]::before,
+#list tbody tr td:first-child a[href$=".bmp" i]::before {
   content: "🖼️";
 }
 
-/* Video */
-#list tbody tr td:first-child a[href$=".mp4"]::before,
-#list tbody tr td:first-child a[href$=".avi"]::before,
-#list tbody tr td:first-child a[href$=".mov"]::before,
-#list tbody tr td:first-child a[href$=".wmv"]::before,
-#list tbody tr td:first-child a[href$=".flv"]::before,
-#list tbody tr td:first-child a[href$=".webm"]::before,
-#list tbody tr td:first-child a[href$=".mkv"]::before {
+#list tbody tr td:first-child a[href$=".mp4" i]::before,
+#list tbody tr td:first-child a[href$=".avi" i]::before,
+#list tbody tr td:first-child a[href$=".mov" i]::before,
+#list tbody tr td:first-child a[href$=".wmv" i]::before,
+#list tbody tr td:first-child a[href$=".flv" i]::before,
+#list tbody tr td:first-child a[href$=".webm" i]::before,
+#list tbody tr td:first-child a[href$=".mkv" i]::before {
   content: "🎬";
 }
 
-/* Audio */
-#list tbody tr td:first-child a[href$=".mp3"]::before,
-#list tbody tr td:first-child a[href$=".wav"]::before,
-#list tbody tr td:first-child a[href$=".flac"]::before,
-#list tbody tr td:first-child a[href$=".aac"]::before,
-#list tbody tr td:first-child a[href$=".ogg"]::before,
-#list tbody tr td:first-child a[href$=".m4a"]::before {
+#list tbody tr td:first-child a[href$=".mp3" i]::before,
+#list tbody tr td:first-child a[href$=".wav" i]::before,
+#list tbody tr td:first-child a[href$=".flac" i]::before,
+#list tbody tr td:first-child a[href$=".aac" i]::before,
+#list tbody tr td:first-child a[href$=".ogg" i]::before,
+#list tbody tr td:first-child a[href$=".m4a" i]::before {
   content: "🎵";
 }
 
-/* Archives */
-#list tbody tr td:first-child a[href$=".zip"]::before,
-#list tbody tr td:first-child a[href$=".rar"]::before,
-#list tbody tr td:first-child a[href$=".tar"]::before,
-#list tbody tr td:first-child a[href$=".gz"]::before,
-#list tbody tr td:first-child a[href$=".7z"]::before,
-#list tbody tr td:first-child a[href$=".bz2"]::before,
-#list tbody tr td:first-child a[href$=".xz"]::before {
+#list tbody tr td:first-child a[href$=".zip" i]::before,
+#list tbody tr td:first-child a[href$=".rar" i]::before,
+#list tbody tr td:first-child a[href$=".tar" i]::before,
+#list tbody tr td:first-child a[href$=".gz" i]::before,
+#list tbody tr td:first-child a[href$=".7z" i]::before,
+#list tbody tr td:first-child a[href$=".bz2" i]::before,
+#list tbody tr td:first-child a[href$=".xz" i]::before {
   content: "📦";
 }
 
-/* Documents */
-#list tbody tr td:first-child a[href$=".pdf"]::before {
+#list tbody tr td:first-child a[href$=".pdf" i]::before {
   content: "📕";
 }
 
-#list tbody tr td:first-child a[href$=".doc"]::before,
-#list tbody tr td:first-child a[href$=".docx"]::before {
+#list tbody tr td:first-child a[href$=".doc" i]::before,
+#list tbody tr td:first-child a[href$=".docx" i]::before {
   content: "📘";
 }
 
-#list tbody tr td:first-child a[href$=".xls"]::before,
-#list tbody tr td:first-child a[href$=".xlsx"]::before,
-#list tbody tr td:first-child a[href$=".csv"]::before {
+#list tbody tr td:first-child a[href$=".xls" i]::before,
+#list tbody tr td:first-child a[href$=".xlsx" i]::before,
+#list tbody tr td:first-child a[href$=".csv" i]::before {
   content: "📊";
 }
 
-#list tbody tr td:first-child a[href$=".ppt"]::before,
-#list tbody tr td:first-child a[href$=".pptx"]::before {
+#list tbody tr td:first-child a[href$=".ppt" i]::before,
+#list tbody tr td:first-child a[href$=".pptx" i]::before {
   content: "📙";
 }
 
-#list tbody tr td:first-child a[href$=".txt"]::before,
-#list tbody tr td:first-child a[href$=".md"]::before,
-#list tbody tr td:first-child a[href$=".markdown"]::before {
+#list tbody tr td:first-child a[href$=".txt" i]::before,
+#list tbody tr td:first-child a[href$=".md" i]::before,
+#list tbody tr td:first-child a[href$=".markdown" i]::before {
   content: "📝";
 }
 
-/* Code */
-#list tbody tr td:first-child a[href$=".html"]::before,
-#list tbody tr td:first-child a[href$=".htm"]::before,
-#list tbody tr td:first-child a[href$=".css"]::before,
-#list tbody tr td:first-child a[href$=".js"]::before,
-#list tbody tr td:first-child a[href$=".json"]::before,
-#list tbody tr td:first-child a[href$=".xml"]::before,
-#list tbody tr td:first-child a[href$=".php"]::before,
-#list tbody tr td:first-child a[href$=".py"]::before,
-#list tbody tr td:first-child a[href$=".java"]::before,
-#list tbody tr td:first-child a[href$=".c"]::before,
-#list tbody tr td:first-child a[href$=".cpp"]::before,
-#list tbody tr td:first-child a[href$=".h"]::before,
-#list tbody tr td:first-child a[href$=".sh"]::before,
-#list tbody tr td:first-child a[href$=".rb"]::before,
-#list tbody tr td:first-child a[href$=".go"]::before,
-#list tbody tr td:first-child a[href$=".rs"]::before,
-#list tbody tr td:first-child a[href$=".ts"]::before,
-#list tbody tr td:first-child a[href$=".tsx"]::before,
-#list tbody tr td:first-child a[href$=".jsx"]::before {
+#list tbody tr td:first-child a[href$=".html" i]::before,
+#list tbody tr td:first-child a[href$=".htm" i]::before,
+#list tbody tr td:first-child a[href$=".css" i]::before,
+#list tbody tr td:first-child a[href$=".js" i]::before,
+#list tbody tr td:first-child a[href$=".json" i]::before,
+#list tbody tr td:first-child a[href$=".xml" i]::before,
+#list tbody tr td:first-child a[href$=".php" i]::before,
+#list tbody tr td:first-child a[href$=".py" i]::before,
+#list tbody tr td:first-child a[href$=".java" i]::before,
+#list tbody tr td:first-child a[href$=".c" i]::before,
+#list tbody tr td:first-child a[href$=".cpp" i]::before,
+#list tbody tr td:first-child a[href$=".h" i]::before,
+#list tbody tr td:first-child a[href$=".sh" i]::before,
+#list tbody tr td:first-child a[href$=".rb" i]::before,
+#list tbody tr td:first-child a[href$=".go" i]::before,
+#list tbody tr td:first-child a[href$=".rs" i]::before,
+#list tbody tr td:first-child a[href$=".ts" i]::before,
+#list tbody tr td:first-child a[href$=".tsx" i]::before,
+#list tbody tr td:first-child a[href$=".jsx" i]::before {
   content: "💻";
 }
 
-/* Executables */
-#list tbody tr td:first-child a[href$=".exe"]::before,
-#list tbody tr td:first-child a[href$=".app"]::before,
-#list tbody tr td:first-child a[href$=".dmg"]::before,
-#list tbody tr td:first-child a[href$=".iso"]::before {
+#list tbody tr td:first-child a[href$=".exe" i]::before,
+#list tbody tr td:first-child a[href$=".app" i]::before,
+#list tbody tr td:first-child a[href$=".dmg" i]::before,
+#list tbody tr td:first-child a[href$=".iso" i]::before {
   content: "⚙️";
 }
 
-/* Configuration */
-#list tbody tr td:first-child a[href$=".ini"]::before,
-#list tbody tr td:first-child a[href$=".cfg"]::before,
-#list tbody tr td:first-child a[href$=".conf"]::before,
-#list tbody tr td:first-child a[href$=".yaml"]::before,
-#list tbody tr td:first-child a[href$=".yml"]::before,
-#list tbody tr td:first-child a[href$=".toml"]::before {
+#list tbody tr td:first-child a[href$=".ini" i]::before,
+#list tbody tr td:first-child a[href$=".cfg" i]::before,
+#list tbody tr td:first-child a[href$=".conf" i]::before,
+#list tbody tr td:first-child a[href$=".yaml" i]::before,
+#list tbody tr td:first-child a[href$=".yml" i]::before,
+#list tbody tr td:first-child a[href$=".toml" i]::before {
   content: "🔧";
 }
 
-/* =========================
-   Parent directory hover
-   ========================= */
 .parent a:hover {
   color: var(--parent-hover);
 }
 
-/* =========================
-   Footer
-   ========================= */
 footer {
   font-size: 15px;
   text-align: center;
@@ -488,9 +454,6 @@ footer a {
   color: var(--link);
 }
 
-/* =========================
-   Breadcrumb navigation
-   ========================= */
 .breadcrumb-nav {
   margin: 1rem 0 1.5rem;
   padding: 0.75rem 1rem;
@@ -542,9 +505,6 @@ footer a {
   font-weight: 500;
 }
 
-/* =========================
-   Copy page URL button
-   ========================= */
 .copy-page-url-btn {
   appearance: none;
   border: 1px solid var(--rule);
@@ -570,9 +530,6 @@ footer a {
   box-shadow: var(--focus);
 }
 
-/* =========================
-   Pagination controls
-   ========================= */
 .pagination {
   display: flex;
   flex-direction: column;
@@ -637,9 +594,6 @@ footer a {
   padding: 0 0.25rem;
 }
 
-/* =========================
-   Responsive: mobile (≤ 720px)
-   ========================= */
 @media (max-width: 720px) {
   body {
     padding: clamp(16px, 4vw, 32px);
@@ -676,7 +630,7 @@ footer a {
     background: var(--bg-elev);
   }
 
-  body.theme-dark tr {
+  html.theme-dark tr {
     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
   }
 
@@ -701,11 +655,10 @@ footer a {
     letter-spacing: 0.04em;
   }
 
-  body.theme-dark td::before {
+  html.theme-dark td::before {
     color: rgba(255, 255, 255, 0.65);
   }
 
-  /* Fallback labels when data-label is absent */
   td:nth-of-type(1):not([data-label])::before {
     content: "Name";
   }
@@ -742,5 +695,14 @@ footer a {
     padding: 0.4rem 0.75rem;
     margin-left: 0;
     margin-top: 0.5rem;
+  }
+
+  td:first-child {
+    align-items: center;
+  }
+
+  .file-cell {
+    flex: 1;
+    min-width: 0;
   }
 }
