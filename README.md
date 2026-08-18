@@ -60,12 +60,6 @@ include /etc/nginx/modules-enabled/*.conf;
 ```
 
 > `location` part.
->
-> Content-Disposition pin the real name for aria2 / wget.
->
-> Do **not** change `default_type` to `application/x-binary`. Motrix Next will not trust a no-suffix name, then it look at Content-Type to guess a suffix. x-binary it not know, so you get 未捕获的文件名 / `unresolved-filename`.
->
-> File that already have suffix still can preview, we not touch them.
 
 ```ini
 location / {
