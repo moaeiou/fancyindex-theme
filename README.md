@@ -62,9 +62,10 @@ include /etc/nginx/modules-enabled/*.conf;
 > `location` part.
 
 ```ini
-location / {
+location ^~ / {
     alias /var/www/html/;
     include mime.types;
+    default_type application/octet-stream;
     fancyindex on;
     fancyindex_localtime on;
     fancyindex_show_path off;
